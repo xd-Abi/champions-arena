@@ -1,0 +1,6 @@
+packages:
+  - api-auth
+  - api-gateway
+  - api-notification
+  - api-profile
+  - api-tweet
