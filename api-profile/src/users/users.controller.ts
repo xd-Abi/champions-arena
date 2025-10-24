@@ -12,7 +12,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly users: UsersService) {}
+  constructor(private readonly users: UsersService) { }
 
   @Get('me')
   getMe(@CurrentUserId() userId: string) {
@@ -30,23 +30,22 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: 'uploads',
-      filename: (_req, file, cb) => {
-        const name = `u_${Date.now()}_${Math.random().toString(36).slice(2)}${extname(file.originalname)}`;
-        cb(null, name);
-      },
+      filename: (_req, file, cb) =>
+        cb(null, `u_${Date.now()}_${Math.random().toString(36).slice(2)}${extname(file.originalname)}`),
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => {
+      const ok = /^image\/(png|jpe?g|webp)$/i.test(file.mimetype);
+      if (!ok) return cb(new BadRequestException('Nur PNG, JPG/JPEG, WEBP erlaubt'), false);
+      cb(null, true);
+    },
   }))
   uploadPic(
     @CurrentUserId() userId: string,
     @UploadedFile(new ParseFilePipe({
-      validators: [
-        new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
-        new FileTypeValidator({ fileType: /(png|jpe?g|webp)$/i }),
-      ],
+      validators: [ new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }) ],
     })) file: Express.Multer.File,
   ) {
-    if (!file) throw new BadRequestException('file fehlt');
     const p = this.users.setPicture(userId, file.path);
     return this.toResponse(p);
   }
