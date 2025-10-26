@@ -3,9 +3,11 @@ import { AppController } from './app.controller';
 import { GoogleStrategy } from './google.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import * as fs from 'fs';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     JwtModule.registerAsync({
       useFactory: () => {
         const privateKey = fs.readFileSync(
