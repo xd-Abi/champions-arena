@@ -1,0 +1,293 @@
+{
+  "info": {
+    "name": "Champions Arena - Tweet Service",
+    "description": "API Collection für den Tweet Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3002/api"
+    },
+    {
+      "key": "token",
+      "value": "your-jwt-token-here-minimum-20-chars"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tweets",
+      "item": [
+        {
+          "name": "Tweet erstellen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Mein erster Tweet über Champions Arena! 🚀\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tweets",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets"]
+            }
+          }
+        },
+        {
+          "name": "Feed abrufen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets?skip=0&take=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets"],
+              "query": [
+                {
+                  "key": "skip",
+                  "value": "0"
+                },
+                {
+                  "key": "take",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tweet abrufen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tweet bearbeiten",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Aktualisierter Tweet-Inhalt\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tweet löschen",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Likes",
+      "item": [
+        {
+          "name": "Tweet liken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId", "like"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Like entfernen",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId", "like"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Kommentare",
+      "item": [
+        {
+          "name": "Kommentar erstellen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Toller Tweet! Ich stimme zu.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId", "comments"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kommentare abrufen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId", "comments"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kommentar löschen",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tweets/:tweetId/comments/:commentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["tweets", ":tweetId", "comments", ":commentId"],
+              "variable": [
+                {
+                  "key": "tweetId",
+                  "value": "tweet-id-here"
+                },
+                {
+                  "key": "commentId",
+                  "value": "comment-id-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
