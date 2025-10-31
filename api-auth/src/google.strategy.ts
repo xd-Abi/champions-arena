@@ -41,7 +41,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   private resolvePublicKeyPem(): string {
-    const inline = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH!, 'utf8');
+    const inline = fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH!, 'utf8');
     if (inline) return inline;
 
     throw new Error(
