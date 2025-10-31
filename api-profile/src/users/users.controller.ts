@@ -1,6 +1,6 @@
 import {
   Controller, Get, Put, Post, Delete, UseInterceptors, UploadedFile, HttpCode,
-  BadRequestException, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Body
+  BadRequestException, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Body, UseGuards
 } from '@nestjs/common';
 import type { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -9,7 +9,10 @@ import { extname } from 'path';
 import { UsersService } from './users.service';
 import { CurrentUserId } from './current-user.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
+
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) { }
@@ -43,7 +46,7 @@ export class UsersController {
   uploadPic(
     @CurrentUserId() userId: string,
     @UploadedFile(new ParseFilePipe({
-      validators: [ new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }) ],
+      validators: [new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 })],
     })) file: Express.Multer.File,
   ) {
     const p = this.users.setPicture(userId, file.path);
