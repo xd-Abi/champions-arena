@@ -72,8 +72,8 @@ GET http://localhost:3000/authorize
 ### Schritt 2: Token in Postman verwenden
 
 **Für Production:**
-- **Header:** `Authorization`
-- **Value:** `Bearer YOUR_TOKEN_HERE`
+- **Authorization:** `Bearer Token`
+- **Value:** `YOUR_TOKEN_HERE`
 
 **Für Development:**
 - **Header:** `x-user-id`

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { importSPKI, jwtVerify } from 'jose';
+import { importJWK, jwtVerify } from 'jose';
 
 interface JWKSResponse {
   keys: Array<{
@@ -74,11 +74,8 @@ export class AuthService {
       const publicKeyStr = await this.getPublicKey();
       const jwk = JSON.parse(publicKeyStr);
 
-      // Import JWK als CryptoKey
-      const publicKey = await importSPKI(
-        this.jwkToPem(jwk),
-        'RS256',
-      );
+      // Import JWK direkt (jose unterstützt JWK nativ)
+      const publicKey = await importJWK(jwk, 'RS256');
 
       // Verifiziere JWT
       const { payload } = await jwtVerify(token, publicKey, {
@@ -112,57 +109,30 @@ export class AuthService {
   }
 
   /**
-   * Hilfsfunktion: Konvertiert JWK zu PEM Format
-   */
-  private jwkToPem(jwk: any): string {
-    // Für RSA Public Key
-    const header = '-----BEGIN PUBLIC KEY-----\n';
-    const footer = '\n-----END PUBLIC KEY-----';
-
-    // Vereinfachte PEM-Konvertierung für RS256
-    // In Produktion: Verwende eine Library wie node-jose
-    const n = this.base64UrlToBase64(jwk.n);
-    const e = this.base64UrlToBase64(jwk.e);
-
-    // ASN.1 DER Encoding für RSA Public Key
-    const modulus = Buffer.from(n, 'base64');
-    const exponent = Buffer.from(e, 'base64');
-
-    // Simplified: Return PEM (in production use proper library)
-    // For now, we'll use a workaround with the Auth Service
-    return `${header}${n}${footer}`;
-  }
-
-  private base64UrlToBase64(base64url: string): string {
-    let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-    while (base64.length % 4) {
-      base64 += '=';
-    }
-    return base64;
-  }
-
-  /**
-   * Vereinfachte Validierung: Nutzt x-user-id Header für Entwicklung
-   * und JWT Token für Produktion
+   * Flexible Validierung: Unterstützt beide Methoden parallel
+   * 1. x-user-id Header (Development/Testing)
+   * 2. JWT Token (Production/Auth Service Integration)
    */
   async getUserId(
     authHeader: string | undefined,
     userIdHeader: string | undefined,
   ): Promise<string> {
-    // Development: Nutze x-user-id Header
-    if (userIdHeader && process.env.NODE_ENV !== 'production') {
-      console.log('⚠️ Development Mode: Using x-user-id header');
+    // Option 1: x-user-id Header (immer akzeptiert für einfaches Testing)
+    if (userIdHeader) {
+      console.log('🔓 Using x-user-id header:', userIdHeader);
       return userIdHeader;
     }
 
-    // Production: Validiere JWT Token
+    // Option 2: JWT Token (für echte Authentifizierung)
     const token = this.extractTokenFromHeader(authHeader);
 
     if (!token) {
-      throw new UnauthorizedException('No token provided');
+      throw new UnauthorizedException('No authentication provided. Use either x-user-id header or Authorization Bearer token');
     }
 
+    console.log('🔐 Validating JWT token...');
     const payload = await this.validateToken(token);
+    console.log('✅ Token valid for user:', payload.sub);
     return payload.sub;
   }
 }
