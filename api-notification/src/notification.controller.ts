@@ -4,19 +4,19 @@ import {
   Post, 
   Delete, 
   Body, 
-  Req, 
-  Res, 
   HttpCode,
   HttpStatus,
   Query,
   Sse,
+  UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import { Observable, interval, map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { NotificationService } from './notification.service';
 import { MarkAsReadDto } from './dto/mark-as-read.dto';
 import { SubscribeDto } from './dto/subscribe.dto';
 import { Notification } from './entities/notification.entity';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { CurrentUser } from './auth/current-user.decorator';
 
 // Interface für SSE-Nachrichten
 interface MessageEvent {
@@ -27,6 +27,7 @@ interface MessageEvent {
 }
 
 @Controller('notifications')
+@UseGuards(JwtAuthGuard)
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
@@ -36,13 +37,10 @@ export class NotificationController {
    */
   @Get()
   async getNotifications(
-    @Req() req: Request,
+    @CurrentUser() userId: string,
     @Query('unreadOnly') unreadOnly?: string,
     @Query('limit') limit?: string,
   ) {
-    // In Produktion: userId aus JWT Token extrahieren
-    const userId = this.getUserIdFromRequest(req);
-
     if (unreadOnly === 'true') {
       return await this.notificationService.getUnreadNotifications(userId);
     }
@@ -56,8 +54,7 @@ export class NotificationController {
    * Anzahl der ungelesenen Benachrichtigungen
    */
   @Get('count')
-  async getUnreadCount(@Req() req: Request) {
-    const userId = this.getUserIdFromRequest(req);
+  async getUnreadCount(@CurrentUser() userId: string) {
     const count = await this.notificationService.getUnreadCount(userId);
     return { count };
   }
@@ -68,8 +65,7 @@ export class NotificationController {
    */
   @Post('mark-as-read')
   @HttpCode(HttpStatus.OK)
-  async markAsRead(@Req() req: Request, @Body() dto: MarkAsReadDto) {
-    const userId = this.getUserIdFromRequest(req);
+  async markAsRead(@CurrentUser() userId: string, @Body() dto: MarkAsReadDto) {
     await this.notificationService.markAsRead(userId, dto.notificationIds);
     return { success: true };
   }
@@ -80,8 +76,7 @@ export class NotificationController {
    */
   @Post('mark-all-read')
   @HttpCode(HttpStatus.OK)
-  async markAllAsRead(@Req() req: Request) {
-    const userId = this.getUserIdFromRequest(req);
+  async markAllAsRead(@CurrentUser() userId: string) {
     await this.notificationService.markAllAsRead(userId);
     return { success: true };
   }
@@ -92,8 +87,7 @@ export class NotificationController {
    */
   @Post('subscribe')
   @HttpCode(HttpStatus.CREATED)
-  async subscribe(@Req() req: Request, @Body() dto: SubscribeDto) {
-    const userId = this.getUserIdFromRequest(req);
+  async subscribe(@CurrentUser() userId: string, @Body() dto: SubscribeDto) {
     await this.notificationService.subscribe(
       userId, 
       dto.deviceToken, 
@@ -108,8 +102,7 @@ export class NotificationController {
    */
   @Delete('unsubscribe')
   @HttpCode(HttpStatus.OK)
-  async unsubscribe(@Req() req: Request) {
-    const userId = this.getUserIdFromRequest(req);
+  async unsubscribe(@CurrentUser() userId: string) {
     await this.notificationService.unsubscribe(userId);
     return { success: true, message: 'Successfully unsubscribed from notifications' };
   }
@@ -119,9 +112,8 @@ export class NotificationController {
    * Echtzeit-Stream für Benachrichtigungen (Server-Sent Events)
    */
   @Sse('stream')
-  streamNotifications(@Req() req: Request): Observable<MessageEvent> {
-    const userId = this.getUserIdFromRequest(req);
-
+  streamNotifications(@Query('userId') userId: string): Observable<MessageEvent> {
+    // SSE kann nicht mit Authorization Header arbeiten, daher userId als Query Parameter
     // Observable vom Service holen und in SSE-Format umwandeln
     return this.notificationService.getNotificationStream(userId).pipe(
       map((notification: Notification) => ({
@@ -130,22 +122,5 @@ export class NotificationController {
         type: 'notification',
       }))
     );
-  }
-
-  /**
-   * Hilfsmethode: Extrahiert die User-ID aus dem Request
-   * In Produktion: JWT Token validieren und User-ID extrahieren
-   */
-  private getUserIdFromRequest(req: Request): string {
-    // Für Entwicklung: User-ID aus Header oder Query-Parameter
-    const userId = req.headers['x-user-id'] as string || req.query.userId as string;
-    
-    if (!userId) {
-      // In Produktion würde hier ein UnauthorizedException geworfen
-      // throw new UnauthorizedException('User not authenticated');
-      return 'demo-user-id'; // Fallback für Entwicklung
-    }
-
-    return userId;
   }
 }
