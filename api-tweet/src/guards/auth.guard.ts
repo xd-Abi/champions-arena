@@ -3,13 +3,17 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { verify } from 'jsonwebtoken';
+import * as jwksClient from 'jwks-rsa';
 
 interface JwtPayload {
   sub: string;
   iat: number;
   exp: number;
+  iss?: string;
 }
 
 declare global {
@@ -22,8 +26,28 @@ declare global {
 }
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+export class AuthGuard implements CanActivate, OnModuleInit {
+  private jwksClient: jwksClient.JwksClient | null = null;
+
+  onModuleInit() {
+    // Initialisiere JWKS Client - lädt Public Keys vom Auth Service
+    const authServiceUrl =
+      process.env.AUTH_SERVICE_URL || 'http://localhost:3000';
+
+    this.jwksClient = jwksClient.default({
+      jwksUri: `${authServiceUrl}/jwks`,
+      cache: true,
+      cacheMaxAge: 600000, // 10 Minuten Cache
+      rateLimit: true,
+      jwksRequestsPerMinute: 10,
+    });
+
+    console.log(
+      `🔐 Auth Guard initialisiert - JWKS URL: ${authServiceUrl}/jwks`,
+    );
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers.authorization;
 
@@ -36,14 +60,14 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Ungültiger Token');
     }
 
-    // Hier würde normalerweise die JWT-Validierung gegen den Auth Service erfolgen
-    // Für das Schulprojekt verwenden wir eine vereinfachte Mock-Validierung
     try {
-      const payload = this.validateToken(token);
+      const payload = await this.validateToken(token);
       request.user = payload;
+      console.log(`✅ Token validiert für User: ${payload.sub}`);
       return true;
-    } catch (error) {
-      throw new UnauthorizedException('Token ungültig oder abgelaufen' + error);
+    } catch (err) {
+      console.error('❌ Token-Validierung fehlgeschlagen:', err.message);
+      throw new UnauthorizedException('Token ungültig oder abgelaufen');
     }
   }
 
@@ -53,21 +77,42 @@ export class AuthGuard implements CanActivate {
   }
 
   /**
-   * Vereinfachte Token-Validierung für das Schulprojekt
-   * In Produktion würde man hier das JWT gegen den Auth Service validieren
+   * Validiert JWT-Token gegen den Auth Service via JWKS
    */
-  private validateToken(token: string): JwtPayload {
-    // Mock-Validierung: Token sollte mindestens 20 Zeichen lang sein
-    if (token.length < 20) {
-      throw new Error('Token zu kurz');
+  private async validateToken(token: string): Promise<JwtPayload> {
+    if (!this.jwksClient) {
+      throw new UnauthorizedException('JWKS Client nicht initialisiert');
     }
 
-    // Simuliere JWT Payload
-    // In Produktion: jwt.verify(token, publicKey) oder Aufruf an Auth Service
-    return {
-      sub: 'google-oauth2|mock-user-id',
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 3600,
-    };
+    return new Promise((resolve, reject) => {
+      // Funktion zum Abrufen des Signing Keys
+      const getKey = (header: any, callback: any) => {
+        this.jwksClient!.getSigningKey(header.kid, (err, key) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+          const signingKey = key?.getPublicKey();
+          callback(null, signingKey);
+        });
+      };
+
+      // Verifiziere Token mit dem Public Key vom Auth Service
+      verify(
+        token,
+        getKey,
+        {
+          issuer: 'champions-arena',
+          algorithms: ['RS256'],
+        },
+        (err, decoded) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(decoded as JwtPayload);
+        },
+      );
+    });
   }
 }
