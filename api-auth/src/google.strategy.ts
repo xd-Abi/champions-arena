@@ -4,7 +4,18 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile } from 'passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import * as fs from 'fs';
-import { calculateJwkThumbprint, exportJWK, importSPKI, JWK } from 'jose';
+import * as crypto from 'crypto';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const jose = require('node-jose');
+
+export interface JWK {
+  kty: string;
+  use: string;
+  kid: string;
+  alg: string;
+  n?: string;
+  e?: string;
+}
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -41,8 +52,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   private resolvePublicKeyPem(): string {
-    const inline = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH!, 'utf8');
-    if (inline) return inline;
+    const publicKeyPath =
+      process.env.JWT_PUBLIC_KEY_PATH || 'keys/jwt.pub';
+    const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
+    if (publicKey) return publicKey;
 
     throw new Error(
       'JWKS: no public key provided. Set JWT_PUBLIC_KEY_PATH in env.',
@@ -52,14 +65,26 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   async getPublicJwks(): Promise<{ keys: JWK[] }> {
     if (!this.cachedJwk) {
       const pem = this.resolvePublicKeyPem();
-      const cryptoKey = await importSPKI(pem, 'RS256');
-      const jwk = await exportJWK(cryptoKey);
+      
+      // Konvertiere PEM zu JWK mit node-jose
+      const keystore = jose.JWK.createKeyStore();
+      const key = await keystore.add(pem, 'pem');
+      const jwk = key.toJSON();
+
+      // Generiere kid (Key ID) durch Hashing des Public Keys
+      const kid = crypto
+        .createHash('sha256')
+        .update(pem)
+        .digest('hex')
+        .substring(0, 16);
 
       const jwkWithMeta: JWK = {
-        ...jwk,
-        alg: 'RS256',
+        kty: jwk.kty,
         use: 'sig',
-        kid: await calculateJwkThumbprint(jwk, 'sha256'),
+        kid: kid,
+        alg: 'RS256',
+        n: jwk.n,
+        e: jwk.e,
       };
 
       this.cachedJwk = jwkWithMeta;
