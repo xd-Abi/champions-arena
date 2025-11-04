@@ -8,7 +8,11 @@ interface UserAvatarProps {
   className?: string;
 }
 
-export function UserAvatar({ userId, size = 'medium', className = '' }: UserAvatarProps) {
+export function UserAvatar({
+  userId,
+  size = 'medium',
+  className = '',
+}: UserAvatarProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
@@ -18,16 +22,23 @@ export function UserAvatar({ userId, size = 'medium', className = '' }: UserAvat
   const sizeMap = {
     small: { width: '32px', height: '32px', fontSize: '0.75em' },
     medium: { width: '40px', height: '40px', fontSize: '0.9em' },
-    large: { width: '64px', height: '64px', fontSize: '1.5em' }
+    large: { width: '64px', height: '64px', fontSize: '1.5em' },
   };
 
   const style = sizeMap[size];
-  const initial = profile?.name?.slice(0, 2).toUpperCase() || userId.slice(0, 2).toUpperCase();
+  const initial =
+    profile?.name?.slice(0, 2).toUpperCase() ||
+    userId.slice(0, 2).toUpperCase();
 
   if (profile?.picturePath) {
+    // Build full URL for profile picture
+    const pictureUrl = profile.picturePath.startsWith('http')
+      ? profile.picturePath
+      : `https://champions-arena.itsabi.com/api/profile/${profile.picturePath}`;
+
     return (
       <img
-        src={profile.picturePath}
+        src={pictureUrl}
         alt={profile.name || 'User'}
         className={className}
         style={{
@@ -35,7 +46,7 @@ export function UserAvatar({ userId, size = 'medium', className = '' }: UserAvat
           height: style.height,
           borderRadius: '50%',
           objectFit: 'cover',
-          flexShrink: 0
+          flexShrink: 0,
         }}
       />
     );
@@ -55,7 +66,7 @@ export function UserAvatar({ userId, size = 'medium', className = '' }: UserAvat
         fontWeight: 700,
         fontSize: style.fontSize,
         color: 'white',
-        flexShrink: 0
+        flexShrink: 0,
       }}
     >
       {initial}

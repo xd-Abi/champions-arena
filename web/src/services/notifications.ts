@@ -32,12 +32,15 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
   return response.json();
 }
 
-export enum NotificationType {
-  NEW_FOLLOWER = 'NEW_FOLLOWER',
-  LIKE = 'LIKE',
-  COMMENT = 'COMMENT',
-  MENTION = 'MENTION',
-}
+export const NotificationType = {
+  NEW_FOLLOWER: 'NEW_FOLLOWER',
+  LIKE: 'LIKE',
+  COMMENT: 'COMMENT',
+  MENTION: 'MENTION',
+} as const;
+
+export type NotificationType =
+  (typeof NotificationType)[keyof typeof NotificationType];
 
 export interface Notification {
   id: string;
@@ -60,7 +63,10 @@ export interface NotificationCount {
 
 export const notificationApi = {
   // Get all notifications
-  getNotifications: (unreadOnly = false, limit?: number): Promise<Notification[]> => {
+  getNotifications: (
+    unreadOnly = false,
+    limit?: number,
+  ): Promise<Notification[]> => {
     const params = new URLSearchParams();
     if (unreadOnly) params.append('unreadOnly', 'true');
     if (limit) params.append('limit', limit.toString());

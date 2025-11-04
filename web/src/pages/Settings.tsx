@@ -26,7 +26,10 @@ export function Settings() {
     setIsSubmitting(true);
     setIsSaved(false);
     try {
-      await profileApi.updateMe({ name: name.trim(), bio: bio.trim() || undefined });
+      await profileApi.updateMe({
+        name: name.trim(),
+        bio: bio.trim() || undefined,
+      });
       await refreshProfile();
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
@@ -64,7 +67,8 @@ export function Settings() {
   };
 
   const handleDeletePicture = async () => {
-    if (!confirm('Are you sure you want to delete your profile picture?')) return;
+    if (!confirm('Are you sure you want to delete your profile picture?'))
+      return;
 
     try {
       await profileApi.deletePicture();
@@ -80,7 +84,10 @@ export function Settings() {
       <div className="settings-header">
         <button onClick={() => navigate('/')} className="back-button">
           <svg viewBox="0 0 24 24" className="back-icon">
-            <path d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z" fill="currentColor"/>
+            <path
+              d="M7.414 13l5.043 5.04-1.414 1.42L3.586 12l7.457-7.46 1.414 1.42L7.414 11H21v2H7.414z"
+              fill="currentColor"
+            />
           </svg>
         </button>
         <h1>Settings</h1>
@@ -92,7 +99,14 @@ export function Settings() {
           <div className="profile-picture-section">
             <div className="profile-picture-preview">
               {profile?.picturePath ? (
-                <img src={profile.picturePath} alt="Profile" />
+                <img
+                  src={
+                    profile.picturePath.startsWith('http')
+                      ? profile.picturePath
+                      : `https://champions-arena.itsabi.com/api/profile/${profile.picturePath}`
+                  }
+                  alt="Profile"
+                />
               ) : (
                 <div className="profile-picture-placeholder">
                   {profile?.name?.slice(0, 2).toUpperCase() || 'U'}
@@ -110,7 +124,10 @@ export function Settings() {
                 Upload Photo
               </label>
               {profile?.picturePath && (
-                <button onClick={handleDeletePicture} className="delete-picture-button">
+                <button
+                  onClick={handleDeletePicture}
+                  className="delete-picture-button"
+                >
                   Remove
                 </button>
               )}
