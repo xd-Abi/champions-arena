@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Tweet } from '../services/api';
+import { UserAvatar, UserName } from './UserInfo';
 import '../styles/TweetCard.css';
 
 interface TweetCardProps {
@@ -84,8 +85,8 @@ export function TweetCard({ tweet, onTweetDeleted, onTweetLiked, currentUserId }
     <div className="tweet-card">
       <div className="tweet-header">
         <div className="tweet-author">
-          <div className="author-avatar">{tweet.authorId.slice(0, 2).toUpperCase()}</div>
-          <span className="author-name">User {tweet.authorId.slice(0, 8)}</span>
+          <UserAvatar userId={tweet.authorId} size="medium" className="author-avatar" />
+          <UserName userId={tweet.authorId} className="author-name" />
           <span className="tweet-time">{formatDate(tweet.createdAt)}</span>
         </div>
         {isAuthor && (
@@ -143,10 +144,10 @@ export function TweetCard({ tweet, onTweetDeleted, onTweetLiked, currentUserId }
           <div className="comments-list">
             {tweet.comments.map((comment) => (
               <div key={comment.id} className="comment">
-                <div className="comment-avatar">{comment.authorId.slice(0, 2).toUpperCase()}</div>
+                <UserAvatar userId={comment.authorId} size="small" className="comment-avatar" />
                 <div className="comment-body">
                   <div className="comment-header">
-                    <span className="comment-author">User {comment.authorId.slice(0, 8)}</span>
+                    <UserName userId={comment.authorId} className="comment-author" />
                     <span className="comment-time">{formatDate(comment.createdAt)}</span>
                   </div>
                   <div className="comment-content">{comment.content}</div>

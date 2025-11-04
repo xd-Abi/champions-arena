@@ -24,6 +24,10 @@ export class UsersService {
     return this.getOrCreate(id);
   }
 
+  getUserById(id: string): UserProfile | null {
+    return this.db.get(id) || null;
+  }
+
   updateMe(
     id: string,
     patch: Partial<Pick<UserProfile, 'name' | 'bio'>>,

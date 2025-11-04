@@ -55,6 +55,11 @@ export const profileApi = {
     return fetchWithAuth(`${API_BASE_URL}/me`);
   },
 
+  // Get user profile by ID
+  getUserById: (userId: string): Promise<UserProfile> => {
+    return fetchWithAuth(`${API_BASE_URL}/users/${userId}`);
+  },
+
   // Update current user profile
   updateMe: (data: UpdateProfileDto): Promise<UserProfile> => {
     return fetchWithAuth(`${API_BASE_URL}/me`, {

@@ -31,8 +31,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadProfile = async () => {
     try {
       const { profileApi } = await import('../services/profile');
+      const { userCacheService } = await import('../services/userCache');
       const data = await profileApi.getMe();
       setProfile(data);
+      // Cache current user profile
+      userCacheService.setCurrentUser(data);
     } catch (error) {
       setProfile(null);
     }

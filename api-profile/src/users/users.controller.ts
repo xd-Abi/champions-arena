@@ -12,6 +12,8 @@ import {
   MaxFileSizeValidator,
   Body,
   UseGuards,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import type { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -22,24 +24,37 @@ import { CurrentUserId } from './current-user.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 
-@UseGuards(JwtAuthGuard)
-@Controller('me')
+@Controller()
 export class UsersController {
   constructor(private readonly users: UsersService) {}
 
-  @Get()
+  // Public endpoint to get any user by ID
+  @Get('users/:userId')
+  @UseGuards(JwtAuthGuard)
+  getUserById(@Param('userId') userId: string) {
+    const p = this.users.getUserById(userId);
+    if (!p) {
+      throw new NotFoundException('User not found');
+    }
+    return this.toResponse(p);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
   getMe(@CurrentUserId() userId: string) {
     const p = this.users.getMe(userId);
     return this.toResponse(p);
   }
 
-  @Put()
+  @UseGuards(JwtAuthGuard)
+  @Put('me')
   updateMe(@CurrentUserId() userId: string, @Body() dto: UpdateProfileDto) {
     const p = this.users.updateMe(userId, dto);
     return this.toResponse(p);
   }
 
-  @Post('picture')
+  @UseGuards(JwtAuthGuard)
+  @Post('me/picture')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -75,7 +90,8 @@ export class UsersController {
     return this.toResponse(p);
   }
 
-  @Delete('picture')
+  @UseGuards(JwtAuthGuard)
+  @Delete('me/picture')
   @HttpCode(204)
   deletePic(@CurrentUserId() userId: string) {
     this.users.removePicture(userId);
