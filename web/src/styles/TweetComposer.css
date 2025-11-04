@@ -1,0 +1,58 @@
+.tweet-composer {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tweet-composer form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tweet-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.1em;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+}
+
+.tweet-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.tweet-composer-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.character-count {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.tweet-button {
+  padding: 8px 24px;
+  background-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: background-color 0.2s;
+}
+
+.tweet-button:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.tweet-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
