@@ -1,11 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import type { UserProfile } from '../services/profile';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
+  profile: UserProfile | null;
   login: () => void;
   logout: () => void;
   getToken: () => string | null;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,13 +26,31 @@ function getCookie(name: string): string | null {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  const loadProfile = async () => {
+    try {
+      const { profileApi } = await import('../services/profile');
+      const data = await profileApi.getMe();
+      setProfile(data);
+    } catch (error) {
+      setProfile(null);
+    }
+  };
 
   useEffect(() => {
     // Check if user has access token in cookies
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const token = getCookie('ca-auth');
-      console.log('Token:', token);
-      setIsAuthenticated(!!token);
+
+      if (token) {
+        setIsAuthenticated(true);
+        await loadProfile();
+      } else {
+        setIsAuthenticated(false);
+        setProfile(null);
+      }
+
       setIsLoading(false);
     };
 
@@ -51,10 +72,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     document.cookie =
       'ca-auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     setIsAuthenticated(false);
+    setProfile(null);
+  };
+
+  const refreshProfile = async () => {
+    await loadProfile();
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, getToken }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, profile, login, logout, getToken, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

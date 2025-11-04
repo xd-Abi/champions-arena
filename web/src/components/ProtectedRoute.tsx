@@ -3,10 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requireProfile?: boolean;
 }
 
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+export function ProtectedRoute({ children, requireProfile = false }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading, profile } = useAuth();
 
   if (isLoading) {
     return (
@@ -18,6 +19,11 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If route requires profile and user hasn't completed onboarding
+  if (requireProfile && profile && !profile.name) {
+    return <Navigate to="/onboarding" replace />;
   }
 
   return <>{children}</>;
