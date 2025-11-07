@@ -38,12 +38,15 @@ describe('TweetService', () => {
     });
 
     it('sollte Tweets sortiert nach Datum zurückgeben', () => {
-      service.createTweet('user1', { content: 'Tweet 1' });
-      service.createTweet('user2', { content: 'Tweet 2' });
+      const tweet1 = service.createTweet('user1', { content: 'Tweet 1' });
+      // Kurze Verzögerung um unterschiedliche Timestamps zu garantieren
+      jest.advanceTimersByTime(10);
+      const tweet2 = service.createTweet('user2', { content: 'Tweet 2' });
 
       const feed = service.getFeed();
       expect(feed).toHaveLength(2);
-      expect(feed[0].content).toBe('Tweet 2'); // Neuester zuerst
+      expect(feed[0].id).toBe(tweet2.id); // Neuester zuerst
+      expect(feed[1].id).toBe(tweet1.id);
     });
 
     it('sollte Pagination unterstützen', () => {
