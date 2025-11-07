@@ -1,0 +1,254 @@
+.tweet-card {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+
+.tweet-card:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.tweet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.tweet-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #1a73e8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: white;
+  flex-shrink: 0;
+}
+
+.author-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tweet-time {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.tweet-time::before {
+  content: '·';
+  margin: 0 6px;
+}
+
+.delete-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: transparent;
+  border-radius: 50%;
+  font-size: 1.5em;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: rgba(244, 33, 46, 0.1);
+  color: rgb(244, 33, 46);
+}
+
+.tweet-content {
+  color: var(--text-primary);
+  font-size: 1em;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.tweet-actions {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+.action-button:hover {
+  background-color: rgba(29, 155, 240, 0.1);
+  color: var(--accent);
+}
+
+.action-button.liked {
+  color: rgb(249, 24, 128);
+}
+
+.action-button.liked:hover {
+  background-color: rgba(249, 24, 128, 0.1);
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.action-button span {
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.comments-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 10px 16px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.comment-input:focus {
+  border-color: var(--accent);
+  background-color: var(--bg-primary);
+}
+
+.comment-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.comment-button {
+  padding: 8px 20px;
+  background-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.comment-button:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.comment-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment {
+  display: flex;
+  gap: 12px;
+}
+
+.comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #1a73e8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75em;
+  color: white;
+  flex-shrink: 0;
+}
+
+.comment-body {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  padding: 12px 16px;
+  border-radius: 16px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
+.comment-time {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.delete-comment-button {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: transparent;
+  border-radius: 50%;
+  font-size: 1.2em;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.delete-comment-button:hover:not(:disabled) {
+  background-color: rgba(244, 33, 46, 0.1);
+  color: rgb(244, 33, 46);
+}
+
+.delete-comment-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.comment-content {
+  font-size: 0.95em;
+  color: var(--text-primary);
+  line-height: 1.4;
+}

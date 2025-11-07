@@ -1,0 +1,117 @@
+.home-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.home-header h1 {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.settings-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 50%;
+  padding: 0;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+}
+
+.settings-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.settings-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.user-profile-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.user-profile-btn:hover {
+  opacity: 0.8;
+}
+
+.user-profile-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent), #1a73e8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75em;
+  color: white;
+}
+
+.home-content {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 61px);
+}
+
+.main-feed {
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.feed-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 61px;
+  z-index: 90;
+}
+
+.feed-header h2 {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.feed-divider {
+  height: 8px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}

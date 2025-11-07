@@ -1,0 +1,38 @@
+.tweet-feed {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-loading,
+.feed-error,
+.feed-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.feed-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.feed-error p,
+.feed-empty p {
+  margin-bottom: 16px;
+  font-size: 1em;
+}
+
+.retry-button {
+  padding: 8px 24px;
+  background-color: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 0.95em;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background-color: var(--accent-hover);
+}

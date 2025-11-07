@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserProfile } from './user.entity';
 import * as fs from 'fs';
 
@@ -24,7 +24,14 @@ export class UsersService {
     return this.getOrCreate(id);
   }
 
-  updateMe(id: string, patch: Partial<Pick<UserProfile, 'name' | 'bio'>>): UserProfile {
+  getUserById(id: string): UserProfile | null {
+    return this.db.get(id) || null;
+  }
+
+  updateMe(
+    id: string,
+    patch: Partial<Pick<UserProfile, 'name' | 'bio'>>,
+  ): UserProfile {
     const u = this.getOrCreate(id);
     if (typeof patch.name !== 'undefined') u.name = patch.name;
     if (typeof patch.bio !== 'undefined') u.bio = patch.bio;
@@ -35,7 +42,9 @@ export class UsersService {
     const u = this.getOrCreate(id);
     // altes Bild löschen
     if (u.picturePath && fs.existsSync(u.picturePath)) {
-      try { fs.unlinkSync(u.picturePath); } catch {}
+      try {
+        fs.unlinkSync(u.picturePath);
+      } catch {}
     }
     u.picturePath = filePath;
     return u;
@@ -47,7 +56,9 @@ export class UsersService {
     const old = u.picturePath;
     u.picturePath = null;
     if (old && fs.existsSync(old)) {
-      try { fs.unlinkSync(old); } catch {}
+      try {
+        fs.unlinkSync(old);
+      } catch {}
     }
     return u;
   }

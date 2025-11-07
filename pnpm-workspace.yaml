@@ -4,3 +4,4 @@ packages:
   - api-notification
   - api-profile
   - api-tweet
+  - web

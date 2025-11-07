@@ -1,0 +1,164 @@
+/* Light mode specific overrides */
+
+/* Header with better contrast */
+[data-theme="light"] .home-header,
+[data-theme="light"] .settings-header,
+[data-theme="light"] .feed-header {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-bottom-color: var(--border);
+}
+
+/* Cards and containers */
+[data-theme="light"] .tweet-card:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .onboarding-card,
+[data-theme="light"] .login-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Buttons in light mode */
+[data-theme="light"] .google-login-btn {
+  background-color: white;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .google-login-btn:hover {
+  background-color: var(--bg-secondary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Inputs and textareas */
+[data-theme="light"] .tweet-input,
+[data-theme="light"] .comment-input,
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-textarea {
+  background-color: var(--bg-primary);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .tweet-input:focus,
+[data-theme="light"] .comment-input:focus,
+[data-theme="light"] .form-input:focus,
+[data-theme="light"] .form-textarea:focus {
+  border-color: var(--accent);
+  background-color: var(--bg-primary);
+}
+
+/* Comment bubbles */
+[data-theme="light"] .comment-body {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+/* Action buttons */
+[data-theme="light"] .action-button:hover {
+  background-color: rgba(29, 155, 240, 0.08);
+}
+
+[data-theme="light"] .action-button.liked {
+  color: rgb(249, 24, 128);
+}
+
+[data-theme="light"] .action-button.liked:hover {
+  background-color: rgba(249, 24, 128, 0.08);
+}
+
+/* Settings buttons */
+[data-theme="light"] .settings-btn:hover,
+[data-theme="light"] .theme-toggle:hover,
+[data-theme="light"] .back-button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+[data-theme="light"] .logout-button {
+  border-color: rgb(244, 33, 46);
+  color: rgb(244, 33, 46);
+}
+
+[data-theme="light"] .logout-button:hover {
+  background-color: rgba(244, 33, 46, 0.08);
+}
+
+[data-theme="light"] .delete-picture-button {
+  border-color: rgb(244, 33, 46);
+  color: rgb(244, 33, 46);
+}
+
+[data-theme="light"] .delete-picture-button:hover {
+  background-color: rgba(244, 33, 46, 0.08);
+}
+
+[data-theme="light"] .delete-button:hover:not(:disabled) {
+  background-color: rgba(244, 33, 46, 0.08);
+  color: rgb(244, 33, 46);
+}
+
+/* Main feed divider */
+[data-theme="light"] .feed-divider {
+  background-color: var(--bg-tertiary);
+  border-top-color: var(--border);
+  border-bottom-color: var(--border);
+}
+
+/* Profile picture placeholder in light mode */
+[data-theme="light"] .author-avatar,
+[data-theme="light"] .comment-avatar,
+[data-theme="light"] .user-avatar,
+[data-theme="light"] .profile-picture-placeholder {
+  background: linear-gradient(135deg, var(--accent), #0d8bd9);
+}
+
+/* Composer border */
+[data-theme="light"] .tweet-composer {
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .tweet-composer-footer {
+  border-top-color: var(--border);
+}
+
+/* Loading spinner for light mode */
+[data-theme="light"] .loading-spinner {
+  border-color: var(--border);
+  border-top-color: var(--accent);
+}
+
+/* Settings sections */
+[data-theme="light"] .settings-section {
+  border-bottom-color: var(--border);
+}
+
+[data-theme="light"] .danger-zone {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+/* Improve main feed borders */
+[data-theme="light"] .main-feed {
+  border-left-color: var(--border);
+  border-right-color: var(--border);
+}
+
+/* Tweet card borders */
+[data-theme="light"] .tweet-card {
+  border-bottom-color: var(--border);
+}
+
+/* Comments section */
+[data-theme="light"] .comments-section {
+  border-top-color: var(--border);
+}
+
+/* Onboarding and settings forms */
+[data-theme="light"] .onboarding-card,
+[data-theme="light"] .settings-content .settings-section {
+  background-color: var(--bg-primary);
+}
