@@ -7,6 +7,17 @@ export function TweetFeed() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>(undefined);
+
+  const loadCurrentUser = async () => {
+    try {
+      const { profileApi } = await import('../services/profile');
+      const user = await profileApi.getMe();
+      setCurrentUserId(user.id);
+    } catch (err) {
+      console.error('Failed to load current user:', err);
+    }
+  };
 
   const loadTweets = async () => {
     try {
@@ -23,6 +34,7 @@ export function TweetFeed() {
   };
 
   useEffect(() => {
+    loadCurrentUser();
     loadTweets();
   }, []);
 
@@ -61,7 +73,7 @@ export function TweetFeed() {
           tweet={tweet}
           onTweetDeleted={loadTweets}
           onTweetLiked={loadTweets}
-          currentUserId={tweet.authorId} // This would come from auth context in production
+          currentUserId={currentUserId}
         />
       ))}
     </div>

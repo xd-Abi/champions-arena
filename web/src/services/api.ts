@@ -80,14 +80,14 @@ export const tweetApi = {
   },
 
   // Like tweet
-  likeTweet: (tweetId: string): Promise<void> => {
+  likeTweet: (tweetId: string): Promise<Tweet> => {
     return fetchWithAuth(`${API_BASE_URL}/${tweetId}/like`, {
       method: 'POST',
     });
   },
 
   // Unlike tweet
-  unlikeTweet: (tweetId: string): Promise<void> => {
+  unlikeTweet: (tweetId: string): Promise<Tweet> => {
     return fetchWithAuth(`${API_BASE_URL}/${tweetId}/like`, {
       method: 'DELETE',
     });
