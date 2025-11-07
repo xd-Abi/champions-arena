@@ -15,6 +15,7 @@ export function TweetCard({ tweet, onTweetDeleted, onTweetLiked, currentUserId }
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState('');
   const [isCommenting, setIsCommenting] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
 
   const isLiked = currentUserId ? tweet.likes.includes(currentUserId) : false;
   const isAuthor = currentUserId === tweet.authorId;
@@ -63,6 +64,22 @@ export function TweetCard({ tweet, onTweetDeleted, onTweetLiked, currentUserId }
       alert('Failed to post comment. Please try again.');
     } finally {
       setIsCommenting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+    setDeletingCommentId(commentId);
+    try {
+      const { tweetApi } = await import('../services/api');
+      await tweetApi.deleteComment(tweet.id, commentId);
+      onTweetLiked(); // Refresh to update comments
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      alert('Failed to delete comment. Please try again.');
+    } finally {
+      setDeletingCommentId(null);
     }
   };
 
@@ -142,18 +159,33 @@ export function TweetCard({ tweet, onTweetDeleted, onTweetLiked, currentUserId }
           </form>
 
           <div className="comments-list">
-            {tweet.comments.map((comment) => (
-              <div key={comment.id} className="comment">
-                <UserAvatar userId={comment.authorId} size="small" className="comment-avatar" />
-                <div className="comment-body">
-                  <div className="comment-header">
-                    <UserName userId={comment.authorId} className="comment-author" />
-                    <span className="comment-time">{formatDate(comment.createdAt)}</span>
+            {tweet.comments.map((comment) => {
+              const isCommentAuthor = currentUserId === comment.authorId;
+              const isDeletingThisComment = deletingCommentId === comment.id;
+
+              return (
+                <div key={comment.id} className="comment">
+                  <UserAvatar userId={comment.authorId} size="small" className="comment-avatar" />
+                  <div className="comment-body">
+                    <div className="comment-header">
+                      <UserName userId={comment.authorId} className="comment-author" />
+                      <span className="comment-time">{formatDate(comment.createdAt)}</span>
+                      {isCommentAuthor && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="delete-comment-button"
+                          disabled={isDeletingThisComment}
+                          title="Delete comment"
+                        >
+                          {isDeletingThisComment ? '...' : '×'}
+                        </button>
+                      )}
+                    </div>
+                    <div className="comment-content">{comment.content}</div>
                   </div>
-                  <div className="comment-content">{comment.content}</div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
